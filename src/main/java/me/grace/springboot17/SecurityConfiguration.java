@@ -14,6 +14,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
+                .antMatchers("/")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers("/admin")
+                .access("hasRole('ROLE_ADMIN')")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login").permitAll()
@@ -21,13 +25,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .httpBasic();
     }
 
+    //accept different paramater the the configure method above
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
         auth.inMemoryAuthentication().
                 withUser("user").password("password").roles("USER")
 
         //to add another user, delete ";" from the above command and add
-        .and().withUser("dave").password("begreat").roles("Teacher");
+                //roles can be customized and give difference authorization
+                //password can be encrypted later on
+        .and().withUser("dave").password("begreat").roles("ADMIN");
 
         }
 
